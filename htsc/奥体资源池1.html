@@ -1,0 +1,388 @@
+<html>
+  <head>
+    <style>
+      html,
+      body {
+        /* background-color: transparent; */
+        background: rgba(0, 18, 31, 0.4);
+        margin: 0;
+        padding: 0;
+      }
+
+      #container {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .firstBlank {
+        display: flex;
+        width: 1264px;
+        height: 421px;
+      }
+
+      .secondBlank {
+        display: flex;
+        width: 1264px;
+        height: 421px;
+      }
+
+      .outerDiv {
+        width: 478px;
+        height: 416px;
+        display: flex;
+        flex-flow: row wrap;
+        align-content: flex-start;
+        margin-right: 15px;
+        background: rgba(0, 18, 31, 0.4);
+        padding-top: 5px;
+      }
+
+      .outerDiv1 {
+        width: 282px;
+        height: 421px;
+        display: flex;
+        flex-flow: row wrap;
+        align-content: flex-start;
+        background: rgba(0, 18, 31, 0.4);
+      }
+
+      .flowDiv {
+        overflow: hidden;
+      }
+
+      .outer {
+        width: 92px;
+        height: 90px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        margin-top: 1px;
+      }
+
+      .outer1 {
+        width: 92px;
+        height: 90px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        margin-top: 97px;
+      }
+
+      .flow {
+        width: 70px;
+        height: 80px;
+        border-radius: 5px;
+        position: relative;
+        box-sizing: border-box;
+        margin: 0 auto;
+      }
+
+      .flowActive {
+        background: rgba(0, 52, 97, 0.5);
+        border: 1px solid #0091ff;
+      }
+
+      .flowError {
+        background-image: linear-gradient(
+          180deg,
+          rgba(224, 32, 32, 0.3) 0%,
+          rgba(224, 32, 32, 0) 52%,
+          rgba(224, 32, 32, 0.3) 100%
+        );
+        border: 1px solid #e02020;
+      }
+
+      .flowWarn {
+        background-image: linear-gradient(
+          180deg,
+          rgba(247, 181, 0, 0.3) 0%,
+          rgba(247, 181, 0, 0) 51%,
+          rgba(247, 181, 0, 0.3) 100%
+        );
+        border: 1px solid #f7b500;
+      }
+
+      .content {
+        display: flex;
+        flex-wrap: wrap;
+        margin: 1px 2px;
+      }
+
+      .content > div {
+        display: flex;
+        justify-content: center;
+        width: 15px;
+        height: 15px;
+        font-size: 10px;
+        line-height: 15px;
+        color: #002846;
+        border-radius: 10px;
+        text-align: center;
+        display: flex;
+        flex-wrap: wrap;
+        margin: 5px 3px;
+      }
+
+      .online {
+        background-color: #44d7b6;
+      }
+
+      .offline {
+        background-color: #595959;
+      }
+
+      .ipTag {
+        text-align: center;
+        font-size: 8px;
+        height: 12px;
+        line-height: 12px;
+        /* padding: 0; */
+        color: #72c2ff;
+        transform: scale(0.75);
+        text-align: center;
+      }
+
+      .numST {
+        text-align: center;
+        transform: scale(0.95);
+        cursor: pointer;
+      }
+
+      .titleBar,
+      .titleBar2 {
+        line-height: 35px;
+        height: 35px;
+        font-weight: 600;
+        background: #004b84;
+        font-weight: 600;
+      }
+
+      .titleName {
+        letter-spacing: 5.56px;
+        color: #72c2ff;
+        font-size: 20px;
+        padding-left: 565px;
+      }
+
+      .titleInfo {
+        color: #fff;
+        padding-left: 50px;
+        font-size: 16px;
+      }
+    </style>
+    <script src="/static/sugar/static/js/jquery.min.js"></script>
+    <!-- <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js"></script> -->
+    <!-- <script src="./奥体资源池1.js"></script> -->
+  </head>
+
+  <body>
+    <div id="container">
+      <div class="testDiv"></div>
+    </div>
+
+    <script>
+      (function () {
+        function render(param) {
+          var sqlData = param.data;
+          //   var sqlData = dataFromJSON.data || [];
+          // window.parent.setIpBgColor = '168.13.17.45';
+
+          $('.testDiv').empty();
+
+          for (let title in sqlData) {
+            let topList = sqlData[title];
+            let poolList = '';
+            var domStr = '';
+
+            topList.forEach((d, index) => {
+              let list = d.list;
+              var circleList = '';
+
+              list.forEach((item) => {
+                var contentList = '';
+                let { vmList, status, hostName, machineNum, machineVmNum } =
+                  item;
+                let num = (machineNum > 9 ? 9 : machineNum) - machineVmNum;
+                for (let i = 0; i < num; i++) {
+                  vmList.push({});
+                }
+
+                vmList.forEach((child) => {
+                  contentList += `<div class="${
+                    window.parent.setIpBgColor
+                      ? window.parent.setIpBgColor == item.hostName
+                        ? 'online'
+                        : 'offline'
+                      : window.parent.aotiPoolCircleColor
+                      ? window.parent.aotiPoolCircleColor.currentTarget
+                          .innerHTML == child['category']
+                        ? 'online'
+                        : 'offline'
+                      : child['id']
+                      ? 'online'
+                      : 'offline'
+                  } bgCircle">
+                          <span class="numST" key="${child['id'] || ''}" ip="${
+                    child['oldEndpoint'] || ''
+                  }" middleBigType="${
+                    `${child['middleBigType']}-${child['category']}-${child['middleLittleType']}` ||
+                    ''
+                  }">${child['category'] || ''}</span>
+                        </div>`;
+                });
+                circleList += `<div class="flowDiv">
+                        <div class="${index == 2 ? 'outer1' : 'outer'}">
+                          <div
+                            class="flow ${
+                              status == '1'
+                                ? 'flowWarn'
+                                : status == '2'
+                                ? 'flowError'
+                                : 'flowActive'
+                            }"
+                          >
+                            <div class="content">${contentList}</div>
+                          </div>
+                          <div class="ipTag">IP:${item.hostName}</div>
+                        </div>
+                      </div>`;
+              });
+              poolList += `<div class="${
+                index == 2 ? 'outerDiv1' : 'outerDiv'
+              }">
+                  ${circleList}
+              </div>`;
+            });
+
+            domStr += `${
+              title == '集中交易中间件资源池1'
+                ? `<div class="titleBar">
+                    <span class="titleName">资源池1</span>
+                    <span class="titleInfo"></span>
+                  </div>`
+                : `<div class="titleBar2 titleName">资源池2</div>`
+            }
+            <div class="${
+              title == '集中交易中间件资源池1' ? 'firstBlank' : 'secondBlank'
+            }">
+                    ${poolList}
+                    </div>`;
+            $('.testDiv').append(domStr);
+          }
+
+          let timer;
+          timer = setInterval(() => {
+            if (window.parent.setIpBgColor) {
+              setCountBgColor('', window.parent.setIpBgColor);
+            } else if (window.parent.aotiPoolCircleColor) {
+              setCountBgColor(window.parent.aotiPoolCircleColor, '');
+            } else {
+              restoreBg();
+            }
+          }, 1000);
+
+          function setCountBgColor(e, ip) {
+            let circleNumList = document.querySelectorAll('.bgCircle');
+            let flowList = document.querySelectorAll('.flow');
+
+            let i = 0;
+            let count = 0;
+            let middleBigType = '';
+
+            for (; i < circleNumList.length; i++) {
+              if (ip) {
+                if (
+                  circleNumList[i].children[0].getAttribute('ip') ==
+                  window.parent.setIpBgColor
+                ) {
+                  let nums =
+                    // count++;
+                    (middleBigType =
+                      circleNumList[i].children[0].getAttribute(
+                        'middleBigType'
+                      ));
+                  $(circleNumList[i]).css('background-color', '#44d7b6');
+
+                  for (let item of circleNumList) {
+                    if (
+                      item.children[0].innerHTML ==
+                      circleNumList[i].children[0].innerHTML
+                    ) {
+                      count++;
+                    }
+                  }
+                } else {
+                  $(circleNumList[i]).css('background-color', '#595959');
+                }
+              } else {
+                if (
+                  circleNumList[i].children[0].innerHTML ==
+                  e.currentTarget.innerHTML
+                ) {
+                  count++;
+                  $(circleNumList[i]).css('background-color', '#44d7b6');
+                } else {
+                  $(circleNumList[i]).css('background-color', '#595959');
+                }
+              }
+            }
+
+            $('.titleInfo').html(
+              `${
+                ip ? window.parent.setIpBgColor : e.target.getAttribute('ip')
+              }, ${ip ? '(' : ''} ${
+                ip ? middleBigType : e.target.getAttribute('middleBigType')
+              }, 共${count}台${ip ? ')' : ''}`
+            );
+          }
+          // 还原背景色
+          $('.testDiv').on('click', function (e) {
+            restoreBg(e);
+          });
+
+          function restoreBg() {
+            $('.titleInfo').html('');
+            window.parent.setIpBgColor = '';
+            window.parent.aotiPoolCircleColor = '';
+            let circleNumList = document.querySelectorAll('.bgCircle');
+            let flowList = document.querySelectorAll('.flow');
+
+            let i = 0;
+            for (; i < circleNumList.length; i++) {
+              $(flowList[i]).css('border', '1px solid #0091ff');
+              if (circleNumList[i].children[0].getAttribute('key')) {
+                $(circleNumList[i]).css('background-color', '#44d7b6');
+              }
+            }
+          }
+        }
+        window.parent.postMessage(
+          {
+            sugarUrl: window.location.href,
+            sugarRender: true
+          },
+          '*'
+        );
+
+        window.addEventListener('message', function (event) {
+          try {
+            render(event.data);
+          } catch (e) {
+            window.parent.postMessage(
+              {
+                sugarUrl: window.location.href,
+                sugarError: {
+                  message: e.message
+                }
+              },
+              '*'
+            );
+            throw e;
+          }
+        });
+      })();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,376 @@
+<html>
+  <head>
+    <style>
+      html,
+      body {
+        /* background-color: transparent; */
+        background: rgba(0, 18, 31, 0.4);
+        margin: 0;
+        padding: 0;
+      }
+
+      #container {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .blockInfo {
+        /* display: flex; */
+        width: 100%;
+        height: 437px;
+        background: rgba(0, 18, 31, 0.4);
+      }
+
+      .outerDiv {
+        width: 100%;
+        /* height: 435px; */
+        display: flex;
+        flex-flow: row wrap;
+        align-content: flex-start;
+        /* margin-right: 15px; */
+        /* padding-top: 2px; */
+        padding: 2px 0 0 0;
+      }
+
+      .flow {
+        width: 47%;
+        height: 46px;
+        position: relative;
+        box-sizing: border-box;
+        margin: 0 auto;
+
+        /* background: rgba(0, 52, 97, 0.5);
+        border: 1px solid #0091ff; */
+      }
+      .content2 {
+        height: 100%;
+        width: 100%;
+        font-size: 8px !important;
+        letter-spacing: 0;
+        color: #fff;
+        display: flex;
+        justify-content: space-around;
+        margin-bottom: 3px;
+      }
+      .content2 > div:nth-child(1) {
+        color: #72c2ff;
+      }
+      .content {
+        height: 100%;
+        width: 100%;
+        font-size: 8px !important;
+        letter-spacing: 0;
+        color: #fff;
+      }
+
+      .list_name {
+        font-size: 8px;
+        color: #72c2ff;
+        letter-spacing: 0;
+        padding: 3px 10px 0;
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .ipTag {
+        font-size: 8px;
+        height: 10px;
+        line-height: 10px;
+        /* padding: 0; */
+        color: #72c2ff;
+        /* transform: scale(0.75); */
+        padding: 2px 2px 2px;
+      }
+
+      .setStorage {
+        width: 97%;
+      }
+
+      .numST2 {
+        flex-direction: column;
+        align-items: center;
+        display: flex;
+        justify-content: space-around;
+      }
+      .numST {
+        /* text-align: center;
+        transform: scale(0.95);
+        cursor: pointer; */
+
+        display: flex;
+        justify-content: space-between;
+        padding: 0 2px;
+        height: 14px;
+        line-height: 13px;
+      }
+
+      .progressBar {
+        height: 2px;
+        background-color: #000;
+      }
+
+      .progressBar div {
+        background-color: #6dd400;
+        height: 2px;
+        width: 0;
+      }
+
+      .titleBar {
+        line-height: 35px;
+        height: 35px;
+        background: #004b84;
+        font-weight: 600;
+        letter-spacing: 5.56px;
+        color: #72c2ff;
+        font-size: 20px;
+        text-align: center;
+      }
+
+      .error {
+        color: #e02020;
+      }
+
+      .warn {
+        color: #f7b500;
+      }
+
+      .normal {
+        color: #fff;
+      }
+
+      .flowActive {
+        background: rgba(0, 52, 97, 0.5);
+        border: 1px solid #0091ff;
+      }
+
+      .flowError {
+        background-image: linear-gradient(
+          180deg,
+          rgba(224, 32, 32, 0.3) 0%,
+          rgba(224, 32, 32, 0) 52%,
+          rgba(224, 32, 32, 0.3) 100%
+        );
+        border: 1px solid #e02020;
+      }
+
+      .flowWarn {
+        background-image: linear-gradient(
+          180deg,
+          rgba(247, 181, 0, 0.3) 0%,
+          rgba(247, 181, 0, 0) 51%,
+          rgba(247, 181, 0, 0.3) 100%
+        );
+        border: 1px solid #f7b500;
+      }
+    </style>
+    <!-- <script src="/static/sugar/static/js/jquery.min.js"></script> -->
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="./奥体资源池2-中间.js"></script>
+  </head>
+
+  <body>
+    <div id="container">
+      <div class="testDiv"></div>
+    </div>
+
+    <script>
+      (function () {
+        function render(param) {
+          var sqlData = param.data;
+          sqlData = testData.data || [];
+
+          $('.testDiv').empty();
+
+          for (let title in sqlData) {
+            let topList = sqlData[title];
+
+            let poolList = '';
+            var domStr = '';
+            for (let i = 0; i < topList.length; i++) {
+              if (topList[i].name == '光交') {
+                topList.splice(i, 1);
+              }
+              if (topList[i].name == '存储') {
+                topList.push(topList[i]);
+                topList.splice(i, 1);
+                break;
+              }
+            }
+
+            topList.forEach((d, index) => {
+              let list = d.list;
+              var circleList = '';
+              let arrMem = [];
+
+              if (title == '资源池1网络及存储') {
+                arrMem = [
+                  { name: 'A控' },
+                  { name: 'B控' },
+                  { name: 'C控' },
+                  { name: 'D控' }
+                ];
+              } else if (title == '资源池2网络及存储') {
+                arrMem = [{ name: 'A控' }, { name: 'B控' }];
+              }
+
+              list.forEach((item) => {
+                let { cpuUtilization, ip, memUtilization, status } = item;
+                let contentList = '';
+                if (d.name == '存储') {
+                  arrMem.forEach((memItem) => {
+                    contentList += `<div class="content2 ${
+                      status == '1'
+                        ? 'flowWarn'
+                        : status == '2'
+                        ? 'flowError'
+                        : 'flowActive'
+                    }">
+                  <div class="numST2 netTitle">${memItem.name}</div>
+                  <div class="numST2">
+                    <div>CPU</div>
+                    <div>${
+                      cpuUtilization == '-'
+                        ? cpuUtilization
+                        : Number(cpuUtilization).toFixed(2)
+                    }${cpuUtilization == '-' ? '' : '%'}</div>
+                  </div>
+                  <div class="numST2">
+                    <div>吞吐量</div>
+                    <div>${
+                      memUtilization == '-'
+                        ? memUtilization
+                        : Number(memUtilization).toFixed(2)
+                    }${memUtilization == '-' ? '' : '%'}</div>
+                  </div>
+                  <div class="numST2">
+                    <div>存储</div>
+                    <div>${
+                      memUtilization == '-'
+                        ? memUtilization
+                        : Number(memUtilization).toFixed(2)
+                    }${memUtilization == '-' ? '' : '%'}</div>
+                  </div>
+                  <div class="numST2">
+                    <div>时延</div>
+                    <div>${
+                      memUtilization == '-'
+                        ? memUtilization
+                        : Number(memUtilization).toFixed(2)
+                    }${memUtilization == '-' ? '' : '%'}</div>
+                  </div>
+                  </div>`;
+                  });
+                } else {
+                  console.log('contentList', d.name);
+
+                  contentList = `<div class="content ${
+                    status == '1'
+                      ? 'flowWarn'
+                      : status == '2'
+                      ? 'flowError'
+                      : 'flowActive'
+                  }">
+                  <div class="ipTag">IP:${ip}</div>
+                  <div class="numST">
+                    <div>CPU:</div>
+                    <div>${
+                      cpuUtilization == '-'
+                        ? cpuUtilization
+                        : Number(cpuUtilization).toFixed(2)
+                    }${cpuUtilization == '-' ? '' : '%'}</div>
+
+                  </div>
+                  <div class="progressBar">
+                      <div style="width: ${
+                        cpuUtilization == '-' ? '0' : cpuUtilization + 'px'
+                      }"></div>
+                    </div>
+                  <div class="numST">
+                    <div>内存:</div>
+                    <div>${
+                      memUtilization == '-'
+                        ? memUtilization
+                        : Number(memUtilization).toFixed(2)
+                    }${memUtilization == '-' ? '' : '%'}</div>
+                  </div>
+                  <div class="progressBar">
+                      <div style="width: ${
+                        memUtilization == '-' ? '0' : memUtilization + 'px'
+                      }"></div>
+                    </div>
+                  </div>`;
+                }
+
+                circleList += `<div class="flow  ${
+                  d.name == '存储' ? 'setStorage' : ''
+                }"
+                  >
+                    ${contentList}
+                  </div>`;
+              });
+
+              poolList += `
+              <div class="list_name">${d.name}
+                <img style="width: 12px;height: 14px;padding-top: 2px;" src="${
+                  d.name == '存储'
+                    ? 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABEAAAAUCAYAAABroNZJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAAEnQAABJ0Ad5mH3gAAALcSURBVDhPjVTrT49hGL7eP0Kkn/Ehs+YDpdJBpZJUcwg1RasJG2npRNL5oKQSMzYzzNmwGTYf2IwPzJlhZnOY82mY0xyGy32/9+9XSZs+XHvf93nv57rv677u54HjF0wXg/rAt97f/z7/ekgGh9AZEkrHP5zO0PGCiL/hr5B1F2ESP64PiS54oohR04ikWiLvMFF4lqi4RdQ/IaruESWXiEUniFmbibB8OsMnWlK/EC+JZEJyPbHiJtH6nlj7hej8Tqz7SXT9MnT+INq/Ems+Eg0viNyDdILShSjMSzIslmiUHxq8ngNDiySb0kQnQBS4JJ4JRPV9ouNb/xv+wW+i+TWRsMpUuCQBkURitcnRilreSdkfiLbPIs0LlaFSm98QdY+JnP1E0Ey30UaiL0l1RGQBEVNKTO0gMrdK4AFi/hFrdPZOIn2jNT5iCRFVSIyZJz0J91UiulbeIUqvEItPyuZ94sImIesUtBumdxFzthP5R4mic0T5NZFT1asSTzQxd4/JaPtkTdOyVVrDc3s2vSRWv/XKlJiyq0RwXm85UlJILhFXTmTtIJaeIYovSrbrMiu3rVdapVaw4BiR0irxQhCYKjMW2quxy8673mPGBpmZJtOufUputBmaVENMlmeqEGRuE7LjRHyFFWByxOISyawOqIzqB5JdplWz66SWXraqKu/KBD+VOJFT+0hMKPZarAdKOzw6wxqnmzWg4Zn04ZWR6kxoX+rkCOg8FZx2XXRGJIocnVglkcOF7N1WekKlaG4m0tpMmlo9W86L2q5SVFa8xOi3WG1ylMQTY9k14/IbYvMpm40smQ0l0Qpz9hILpQ/aXF+l0jMbe1eO2BRdJI5ckLLFSpWgdqvVOqUK/VaLVWLNQ5fcCUxxT7KR+MlVIA45I9OI2DIiY4s4dcgGT11Ty9Xa7F0iqYUYmyOHNs61t+cq6IZcTHo5/Q8ap8ndAnrfbAOFb3M3gvkH/oBw7RBrsMsAAAAASUVORK5CYII='
+                    : 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAAEnQAABJ0Ad5mH3gAAAM5SURBVDhPjZTZS9VBFMfPTP9CauaW2iJF6fW677tZkktuUZipZWXummZlmVkupeICFW2vBb1IUU8VVNBOtBBFVA+tFNFKe9/OzFy9Vwvx4cudmTvzmXO+58yPhJMF0lkpEFOUXKxGzkq2NZb638gCMSKngH/EQB5ooB08Cv+PNJCDMJoAKKYFQ8zNhljSC5E1CJk1ZJQ5AJnRz+NBvT5WAxDRdRAeMRAugQy02IDqNrdIUHo3qPsLqO8PqPcXqOc7qPMDaPszs97zw67en2Zf9WUOZCmka7COnkwKDPWMBRUeB+35CtrLoF1vQWVnQKFrIZJaQDVXQY137dr8kPd9AzU/gLCshHANMSmPAr0TQRUXzCYVTekpkHUVxMw0Y0VYOadXa1KMqQclNIN2vwO1vQSp/1zDHIAq1DkZfPMdE13fb1DHe9D6s6C0DhD7RTVXQKv5kqpLoCZbhMoSBU1sgZgeDjFVA22VCywCbXlk/On8CNr6mA/eA9VeM7D6m6BkPhhYyNYcM5GN7M0eYmAEA/0dgFE1oNbnxuy666DIaghrCQM4baUFyyBmLYL05IrymPKPGKCyp+iELqotQqsBprZxITh8lW7bK1DlRVD5eZvOsacnQVHVoNhG0JrToC6OTFVZWcQ2CPdoB6Bqm8x+0yJdn4x/7Vzl9jd27XjB6XOllQ07X5s9Ctr1Wfupe9EUxQbMP2xSzT3A2g/KO2jGOTweWVPK2WeXmpcMg7Y9HQvUoebwoYKjuh91q1iLIf0yIL2TIGanQ/gkQ/hlQnjFQfimGgDPiVtJdYf0iB5pbH4yGsi3cZS6/P4rdISCPZMKFlTKBVkMimsyMO4I4RYBUv0Y2wDaeJuBURMAvRIg5hdA8mFdVY5OesWbuXskr8VCuoXruYisGg9k/8YD+TVQwy1QRh9HuxwipRXSUgiRdwhyXi5EfDPkDL6UfdTPkoHCPcrhpSigKkLxMHtXyr4wUH11VIrhG/ip8XOLqNBzGbqOx5WQIWU8b+SvU495z+yhHagG/JmilifmRahq192YnDbd1xoFCmfzYdQLvgshfVImLV155aM3/7oEjQPapHpSRT0ZOZ4zCsBfg7uysCmcfWIAAAAASUVORK5CYII='
+                }" />
+                </div>
+              <div class="outerDiv" id="${d.name}">
+                      ${circleList}
+                    </div>`;
+            });
+
+            domStr += `<div class="titleBar">${title}</div>
+                    <div class="blockInfo">
+                      ${poolList}
+                    </div>`;
+            $('.testDiv').append(domStr);
+          }
+          $('.content').on('click', function (params) {
+            // params.stopPropagation();
+            window.parent.postMessage(
+              {
+                sugarUrl: window.location.href,
+                // sugarData: params.currentTarget.children[1].innerHTML, // 自定义图表传递给下钻或联动图表的参数
+                sugarData: {
+                  endpoint:
+                    params.currentTarget.children[0].innerHTML.split(':')[1]
+                },
+                isDD: true // 自定义图表触发下钻和联动的关键字(触发下钻和联动功能的必填字段-不可删除)
+              },
+              '*'
+            );
+          });
+        }
+        window.parent.postMessage(
+          {
+            sugarUrl: window.location.href,
+            sugarRender: true
+          },
+          '*'
+        );
+
+        window.addEventListener('message', function (event) {
+          try {
+            render(event.data);
+          } catch (e) {
+            window.parent.postMessage(
+              {
+                sugarUrl: window.location.href,
+                sugarError: {
+                  message: e.message
+                }
+              },
+              '*'
+            );
+            throw e;
+          }
+        });
+      })();
+    </script>
+  </body>
+</html>
