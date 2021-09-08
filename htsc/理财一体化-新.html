@@ -1,0 +1,422 @@
+<html>
+  <head>
+    <style>
+      :root {
+        --normal-background1: linear-gradient(
+          180deg,
+          rgba(0, 145, 255, 0.3) 0%,
+          rgba(0, 145, 255, 0) 52%,
+          rgba(0, 145, 255, 0.3) 100%
+        );
+        --normal-background2: rgba(0, 23, 63, 0.5);
+
+        --warn-background1: #d29a00;
+        --warn-background2: linear-gradient(
+          180deg,
+          rgba(247, 181, 0, 0.09) 46%,
+          rgba(247, 181, 0, 0) 71%,
+          rgba(247, 181, 0, 0.09) 100%
+        );
+
+        --err-background1: #c13030;
+        --err-background2: linear-gradient(
+          180deg,
+          rgba(224, 32, 32, 0.3) 46%,
+          rgba(224, 32, 32, 0) 74%,
+          rgba(224, 32, 32, 0.3) 100%
+        );
+      }
+
+      html,
+      body {
+        background-color: transparent;
+        padding: 0;
+        margin: 0;
+        width: 100%;
+        height: 100%;
+      }
+
+      #container {
+        width: 100%;
+        height: 100%;
+      }
+
+      /* 业务状态 */
+      li.normal {
+        background: var(--normal-background1);
+        border: 1px solid #0091ff;
+      }
+
+      li.warn {
+        background: var(--warn-background1);
+        border: 1px solid #f7b500;
+      }
+
+      li.error {
+        background: var(--err-background1);
+        border: 1px solid #ecdcdc;
+      }
+
+      /* 平台状态 */
+      div.normal {
+        border: 1px solid #0091ff;
+      }
+
+      div.warn {
+        background: var(--warn-background2);
+        border: 1px solid #f7b500;
+      }
+
+      div.error {
+        background: var(--err-background2);
+        border: 1px solid #e02020;
+      }
+
+      /* 平台状态 */
+      .typeStatus {
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        clip-path: circle();
+        margin-right: 5px;
+      }
+
+      span.normal {
+        background: #0091ff;
+      }
+
+      span.warn {
+        background: #f7b500;
+      }
+
+      span.error {
+        background: #e02020;
+      }
+
+      /* title */
+      p {
+        padding: 0;
+        margin: 0;
+      }
+
+      p.normal {
+        color: #81dbff;
+        background: rgba(0, 145, 255, 0.5);
+      }
+
+      p.warn {
+        background: #d29a00;
+      }
+
+      p.error {
+        background: #c13030;
+      }
+
+      ul,
+      li {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        font-size: 12px;
+        color: #ffffff;
+      }
+
+      li {
+        display: flex;
+        width: 100%;
+        box-sizing: border-box;
+        margin: 5px 0;
+        height: 45px;
+        display: flex;
+        align-items: center;
+        border-radius: 10px;
+        padding: 0 5px 0 15px;
+        transition: all 0.3s;
+        cursor: pointer;
+      }
+
+      li:nth-last-child(1) {
+        margin-bottom: 0;
+      }
+
+      li > span {
+        text-align: center;
+      }
+
+      #left {
+        position: absolute;
+        top: 63px;
+        left: 48px;
+        width: 360px;
+      }
+
+      #right {
+        position: absolute;
+        top: 15px;
+        left: 415px;
+        right: 0;
+        bottom: 0;
+        display: inline-flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-content: space-between;
+        color: #ffffff;
+      }
+
+      #right > div {
+        width: 257px;
+        height: 110px;
+        position: relative;
+      }
+
+      #right > div > div {
+        position: absolute;
+        bottom: 0;
+        box-sizing: border-box;
+        width: 257px;
+        height: 110px;
+        display: flex;
+        flex-direction: column;
+        font-size: 20px;
+        border-radius: 10px;
+        transition: all 0.3s;
+        overflow: hidden;
+        cursor: pointer;
+      }
+
+      #right .title {
+        height: 50px;
+        line-height: 50px;
+        text-align: center;
+        font-size: 16px;
+      }
+
+      #right .state {
+        flex: 1;
+        display: inline-flex;
+        align-items: center;
+        justify-content: space-around;
+      }
+    </style>
+    <!-- <script src="/static/sugar/static/js/jquery.min.js"></script> -->
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="./奥体资源池1.js"></script>
+    <script>
+      window.onkeydown = function (e) {
+        if (e.keyCode == 83) {
+          window.top.yanlianMode = true;
+        } else if (e.keyCode == 69) {
+          window.top.yanlianMode = false;
+        }
+      };
+    </script>
+  </head>
+
+  <body>
+    <div id="container">
+      <ul id="left"></ul>
+      <div id="right"></div>
+    </div>
+
+    <script>
+      function gotoDetail(str) {
+        window.open(
+          `http://168.7.8.169:8580/dashboard/17708da4bc7b2da4af16a2d41b036399?businessName=${str}`
+        );
+      }
+      function gotoTabel(str) {
+        window.parent.postMessage(
+          {
+            sugarUrl: window.location.href,
+            sugarData: {
+              _sugar_dd_default_: str
+            }, // 自定义图表传递给下钻或联动图表的参数
+            isDD: true // 自定义图表触发下钻和联动的关键字(触发下钻和联动功能的必填字段-不可删除)
+          },
+          '*'
+        );
+      }
+      (function () {
+        const stateClass = ['normal', 'warn', 'error'];
+        const stateType = ['R', 'T', 'E', 'D', 'S'];
+
+        let sellCenterData, fundCenterData;
+        setInterval(() => {
+          if (window.top.yanlianMode) {
+            $('#公募基金、资管大集合购买').attr('class', 'error');
+            $('#销售中心').attr('class', 'error');
+            $('#销售中心 p').attr('class', 'title error');
+            $('#销售中心 div span:nth-child(1) span').attr(
+              'class',
+              'typeStatus error'
+            );
+          } else {
+            if (fundCenterData[0].alarmLevel) {
+              if (
+                fundCenterData[0].alarmLevel === '0' ||
+                fundCenterData[0].alarmLevel === '1'
+              ) {
+                $('#公募基金、资管大集合购买').attr('class', 'error');
+              } else {
+                $('#公募基金、资管大集合购买').attr('class', 'warn');
+              }
+            } else {
+              $('#公募基金、资管大集合购买').attr('class', 'normal');
+            }
+
+            if (sellCenterData[0].state == 0) {
+              $('#销售中心').attr('class', 'normal');
+              $('#销售中心 p').attr('class', 'title normal');
+              $('#销售中心 div span:nth-child(1) span').attr(
+                'class',
+                'typeStatus normal'
+              );
+            } else if (sellCenterData[0].state == 1) {
+              $('#销售中心').attr('class', 'warn');
+              $('#销售中心 p').attr('class', 'title warn');
+              $('#销售中心 div span:nth-child(1) span').attr(
+                'class',
+                'typeStatus warn'
+              );
+            } else {
+              $('#销售中心').attr('class', 'error');
+              $('#销售中心 p').attr('class', 'title error');
+              $('#销售中心 div span:nth-child(1) span').attr(
+                'class',
+                'typeStatus error'
+              );
+            }
+          }
+        }, 800);
+
+        function render(param) {
+          var data = param.data;
+          data = testData.data;
+
+          sellCenterData = data.sysList.filter((item) => {
+            return item.systemName == '销售中心';
+          });
+          fundCenterData = data.businessList.filter((item) => {
+            return item.businessName == '公募基金、资管大集合购买';
+          });
+
+          $('#left').empty();
+          data &&
+            data.businessList.forEach((item) => {
+              let state = 0;
+
+              if (item.alarmLevel) {
+                if (item.alarmLevel === '0' || item.alarmLevel === '1') {
+                  state = 2;
+                } else {
+                  state = 1;
+                }
+              }
+
+              $('#left').append(`<li id='${
+                item.businessName
+              }' relid='_${item.relNames.join('_')}_' class="${
+                stateClass[
+                  item.businessName == '公募基金、资管大集合购买' &&
+                  window.top.yanlianMode
+                    ? 2
+                    : state
+                ]
+              }" onclick="gotoDetail('${item.businessName}')">
+                        <span style="flex:1;text-align:left">${
+                          item.businessName
+                        }</span>
+                        <span style="width:60px">${item.orderNum || '-'}</span>
+                        <span style="width:60px">${item.sucessCount}</span>
+                        <span style="width:60px">${item.firstTime || '-'}</span>
+                        </li>`);
+            });
+
+          $('#right').empty();
+          data.sysList.forEach((item) => {
+            const stateDom = item.status
+              .map(
+                (i, index) =>
+                  `<span><span class="typeStatus ${stateClass[i]}"></span>${stateType[index]}</span>`
+              )
+              .join('');
+            const classStatus =
+              stateClass[
+                window.top.yanlianMode && item.systemName == '销售中心'
+                  ? 2
+                  : item.state || 0
+              ];
+            $('#right').append(`<div><div id='${
+              item.systemName
+            }' relid='_${item.relNames.join(
+              '_'
+            )}_' class="${classStatus}" onclick="gotoTabel('${item.systemId}')">
+                        <p class="title ${classStatus}">
+                          ${item.systemName}
+                          </p>
+                        <div class="state">
+                            ${stateDom}
+                        </div>
+                        </div></div>`);
+          });
+
+          $('li').hover(
+            function () {
+              $(`#right div[relid*='_${this.id}_']`).css('bottom', 15);
+              $(`#right>div>div:not([relid*='_${this.id}_'])`).css(
+                'opacity',
+                0.4
+              );
+            },
+            function () {
+              $(`#right div[relid*='_${this.id}_']`).css('bottom', 0);
+              $(`#right>div>div:not([relid*='_${this.id}_'])`).css(
+                'opacity',
+                1
+              );
+            }
+          );
+
+          $('#right>div>div').hover(
+            function () {
+              $(`#left>:not([relid*=_${this.id}_])`).css('opacity', 0.4);
+            },
+            function () {
+              $(`#left>:not([relid*=_${this.id}_])`).css('opacity', 1);
+            }
+          );
+        }
+        // 作用：自定义图表渲染完成后通知外界
+        window.parent.postMessage(
+          {
+            sugarUrl: window.location.href,
+            sugarRender: true
+          },
+          '*'
+        );
+
+        // 作用：监听传递给自定义图表的数据，然后进行图表的渲染
+        window.addEventListener('message', function (event) {
+          try {
+            render(event.data);
+            return;
+            setInterval(() => {
+              render(event.data);
+            }, 5000);
+          } catch (e) {
+            window.parent.postMessage(
+              {
+                sugarUrl: window.location.href,
+                sugarError: {
+                  message: e.message
+                }
+              },
+              '*'
+            );
+            throw e;
+          }
+        });
+      })();
+    </script>
+  </body>
+</html>

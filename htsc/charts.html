@@ -1,0 +1,162 @@
+<html>
+  <head>
+    <style>
+      html {
+        background-color: transparent;
+      }
+      #container {
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+    <!-- 下面的注释的script（jquery、echarts世界地图、echarts GL、D3等），您可以根据需要自己引入 -->
+    <script src="/static/sugar/static/js/echarts-5.1.1.min.js"></script>
+    <script src="/static/sugar/static/js/jquery.min.js"></script>
+    <!-- <script src="./chart.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/echarts/5.1.2/echarts.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js"></script> -->
+  </head>
+
+  <body>
+    <div id="container"></div>
+
+    <script>
+      (function () {
+        var chart = echarts.init(document.querySelector('#container'));
+
+        function render(param) {
+          var data = param.data;
+          var config = param.config;
+          // data = testData.data;
+          let lineData = [];
+          for (let index in data.categories) {
+            lineData.push(98);
+          }
+
+          var option = {
+            backgroundColor: 'rgb(1,23,60)',
+            grid: [
+              {
+                left: '10%',
+                bottom: '10%',
+                top: '10%',
+                right: '10%'
+              }
+            ],
+            xAxis: {
+              type: 'category',
+              data: data.categories,
+              axisLine: {
+                show: true,
+                lineStyle: {
+                  color: '#0091ff'
+                }
+              }
+            },
+            yAxis: {
+              type: 'value',
+              splitLine: {
+                show: false
+              },
+              axisLabel: {
+                formatter: '{value}%'
+              },
+              axisLine: {
+                show: true,
+                lineStyle: {
+                  color: '#0091ff'
+                }
+              }
+            },
+            series: [
+              {
+                data: lineData,
+                type: 'line',
+                showSymbol: false,
+                hoverAnimation: false
+              }
+            ]
+          };
+          chart.setOption(option);
+
+          setInterval(() => {
+            if (window.top.yanlianMode) {
+              $('.container').css('visibility', 'visible');
+            } else {
+              $('.container').css('visibility', 'hidden');
+            }
+          }, 800);
+        }
+
+        // 触发联动或下钻行为，如果没开启下钻和联动，则可以删除该处代码
+        // 功能说明：1、主要用于当开启自定义图表下钻或者联动时，获取用于传递给下钻或联动图表的参数
+        //         2、点击时可以获取点击图形的当前值
+        // ------------------------------------------
+        chart.on('click', function (params) {
+          delete params.event;
+          window.parent.postMessage(
+            {
+              sugarUrl: window.location.href,
+              sugarData: params, // 自定义图表传递给下钻或联动图表的参数
+              isDD: true // 自定义图表触发下钻和联动的关键字(触发下钻和联动功能的必填字段-不可删除)
+            },
+            '*'
+          );
+        });
+        // ------------------------------------------
+
+        // 作用：用于监页面大小的更改，从而实现图表宽度的自适应
+        window.addEventListener('resize', function () {
+          try {
+            chart && chart.resize && chart.resize();
+          } catch (e) {
+            window.parent.postMessage(
+              {
+                sugarUrl: window.location.href,
+                sugarError: {
+                  message: e.message
+                }
+              },
+              '*'
+            );
+            throw e;
+          }
+        });
+        // ---------------------------------------
+
+        // 以下内容不需要修改
+        // 字段说明：
+        //        sugarUrl: 自定义图表所在页面地址
+        //        sugarRender：自定义图表是否渲染成功
+        //        sugarError: 自定义图表渲染失败后的信息
+        // ---------------------------------------
+        // 作用：自定义图表渲染完成后通知外界
+        window.parent.postMessage(
+          {
+            sugarUrl: window.location.href,
+            sugarRender: true
+          },
+          '*'
+        );
+
+        // 作用：监听传递给自定义图表的数据，然后进行图表的渲染
+        window.addEventListener('message', function (event) {
+          try {
+            render(event.data);
+          } catch (e) {
+            window.parent.postMessage(
+              {
+                sugarUrl: window.location.href,
+                sugarError: {
+                  message: e.message
+                }
+              },
+              '*'
+            );
+            throw e;
+          }
+        });
+      })();
+    </script>
+  </body>
+</html>

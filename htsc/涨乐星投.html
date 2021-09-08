@@ -1,0 +1,217 @@
+<html>
+  <head>
+    <style>
+      html,
+      body {
+        /* background-color: transparent; */
+        margin: 0;
+        padding: 0;
+        background: rgba(0, 23, 63, 0.5);
+      }
+
+      #container {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .firstBlank {
+        display: flex;
+        width: 100%;
+        height: 100%;
+        flex-flow: row wrap;
+        align-content: flex-start;
+      }
+
+      .flowDiv {
+        width: 174px;
+        height: 465px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        margin: 0 2.5px;
+        border-radius: 10px;
+      }
+
+      .flowTitle {
+        width: 100%;
+        height: 77px;
+        border-radius: 10px 10px 0 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 16px;
+        color: #81dbff;
+      }
+
+      .flowBody {
+        width: 100%;
+        height: 387px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-evenly;
+      }
+
+      .blockInfo {
+        width: 100%;
+        color: #fff;
+        display: flex;
+        justify-content: space-around;
+
+        font-size: 16px;
+      }
+
+      .error {
+        color: #e02020;
+      }
+      .warn {
+        color: #f7b500;
+      }
+      .normal {
+        color: #fff;
+      }
+      .flowActive {
+        background: rgba(0, 145, 255, 0.5);
+      }
+      .activeBorder {
+        border: 1px solid #0091ff;
+      }
+      .flowError {
+        background-image: linear-gradient(
+          180deg,
+          rgba(224, 32, 32, 0.3) 0%,
+          rgba(224, 32, 32, 0) 52%,
+          rgba(224, 32, 32, 0.3) 100%
+        );
+        border: 1px solid #e02020;
+      }
+      .flowWarn {
+        background-image: linear-gradient(
+          180deg,
+          rgba(247, 181, 0, 0.3) 0%,
+          rgba(247, 181, 0, 0) 51%,
+          rgba(247, 181, 0, 0.3) 100%
+        );
+      }
+      .warnBorder {
+        border: 1px solid #f7b500;
+      }
+    </style>
+    <!-- <script src="/static/sugar/static/js/jquery.min.js"></script> -->
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="./涨乐星投.js"></script>
+  </head>
+
+  <body>
+    <div id="container">
+      <div class="firstBlank"></div>
+    </div>
+
+    <script>
+      (function () {
+        function render(param) {
+          var sqlData = param.data;
+          sqlData = testData.data || [];
+          $('.firstBlank').empty();
+
+          var domStr = '';
+          var circleList = '';
+          sqlData.forEach((item) => {
+            let {
+              cpuUtilization,
+              cpuUtilizationMax,
+              ip,
+              memUtilization,
+              memUtilizationMax,
+              status
+            } = item;
+
+            let contentList = `<div class="blockInfo ${
+              status == '0' ? 'normal' : status == '1' ? 'warn' : 'error'
+            }">
+                    <div>CPU:</div>
+                    <div>${Number(cpuUtilization).toFixed(2)}${
+              cpuUtilization == '-' ? '' : '%'
+            }</div>
+                  </div>
+                  <div class="blockInfo">
+                      <div>内存:</div>
+                      <div>${Number(memUtilization).toFixed(2)}${
+              memUtilization == '-' ? '' : '%'
+            }</div>
+                  </div>
+                  <div class="blockInfo">
+                      <div>内存:</div>
+                      <div>${Number(memUtilization).toFixed(2)}${
+              memUtilization == '-' ? '' : '%'
+            }</div>
+                  </div>
+                  <div class="blockInfo">
+                      <div>内存:</div>
+                      <div>${Number(memUtilization).toFixed(2)}${
+              memUtilization == '-' ? '' : '%'
+            }</div>
+                  </div>`;
+            circleList += `<div class="activeBorder flowDiv ">
+                  <div class="flowTitle ${
+                    status == '0'
+                      ? 'flowActive'
+                      : status == '1'
+                      ? 'flowWarn'
+                      : 'flowError'
+                  }">111</div>
+                  <div class="flowBody">
+                    ${contentList}
+                  </div>
+                </div>`;
+          });
+
+          domStr += circleList;
+          $('.firstBlank').append(domStr);
+        }
+
+        $('.flowDiv').on('click', function (params) {
+          // params.stopPropagation();
+          window.parent.postMessage(
+            {
+              sugarUrl: window.location.href,
+              // sugarData: params.currentTarget.children[1].innerHTML, // 自定义图表传递给下钻或联动图表的参数
+              sugarData: {
+                endpoint:
+                  params.currentTarget.children[1].innerHTML.split(':')[1]
+              },
+              isDD: true // 自定义图表触发下钻和联动的关键字(触发下钻和联动功能的必填字段-不可删除)
+            },
+            '*'
+          );
+        });
+
+        window.parent.postMessage(
+          {
+            sugarUrl: window.location.href,
+            sugarRender: true
+          },
+          '*'
+        );
+
+        window.addEventListener('message', function (event) {
+          try {
+            render(event.data);
+          } catch (e) {
+            window.parent.postMessage(
+              {
+                sugarUrl: window.location.href,
+                sugarError: {
+                  message: e.message
+                }
+              },
+              '*'
+            );
+            throw e;
+          }
+        });
+      })();
+    </script>
+  </body>
+</html>
