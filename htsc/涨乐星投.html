@@ -42,7 +42,7 @@
         justify-content: center;
         align-items: center;
         font-size: 16px;
-        color: #81dbff;
+        color: #fff;
       }
 
       .flowBody {
@@ -52,16 +52,21 @@
         flex-direction: column;
         justify-content: space-evenly;
       }
-
       .blockInfo {
         width: 100%;
         color: #fff;
         display: flex;
         justify-content: space-around;
+        text-align: center;
 
         font-size: 16px;
       }
-
+      .infoLeft {
+        width: 60%;
+      }
+      .infoRight {
+        width: 40%;
+      }
       .error {
         color: #e02020;
       }
@@ -73,26 +78,33 @@
       }
       .flowActive {
         background: rgba(0, 145, 255, 0.5);
+        border-bottom: 1px solid #0091ff;
       }
       .activeBorder {
         border: 1px solid #0091ff;
       }
       .flowError {
-        background-image: linear-gradient(
+        /* background-image: linear-gradient(
           180deg,
           rgba(224, 32, 32, 0.3) 0%,
           rgba(224, 32, 32, 0) 52%,
           rgba(224, 32, 32, 0.3) 100%
-        );
+        ); */
+        border-bottom: 1px solid #e02020;
+        background: #e02020;
+      }
+      .errorBorder {
         border: 1px solid #e02020;
       }
       .flowWarn {
-        background-image: linear-gradient(
+        /* background-image: linear-gradient(
           180deg,
           rgba(247, 181, 0, 0.3) 0%,
           rgba(247, 181, 0, 0) 51%,
           rgba(247, 181, 0, 0.3) 100%
-        );
+        ); */
+        background: #f7b500;
+        border-bottom: 1px solid #f7b500;
       }
       .warnBorder {
         border: 1px solid #f7b500;
@@ -112,80 +124,69 @@
       (function () {
         function render(param) {
           var sqlData = param.data;
-          sqlData = testData.data || [];
+          sqlData = testData.result || [];
           $('.firstBlank').empty();
 
-          var domStr = '';
-          var circleList = '';
-          sqlData.forEach((item) => {
-            let {
-              cpuUtilization,
-              cpuUtilizationMax,
-              ip,
-              memUtilization,
-              memUtilizationMax,
-              status
-            } = item;
+          let domStr = '';
+          let circleList = '';
 
-            let contentList = `<div class="blockInfo ${
-              status == '0' ? 'normal' : status == '1' ? 'warn' : 'error'
-            }">
-                    <div>CPU:</div>
-                    <div>${Number(cpuUtilization).toFixed(2)}${
-              cpuUtilization == '-' ? '' : '%'
-            }</div>
-                  </div>
-                  <div class="blockInfo">
-                      <div>内存:</div>
-                      <div>${Number(memUtilization).toFixed(2)}${
-              memUtilization == '-' ? '' : '%'
-            }</div>
-                  </div>
-                  <div class="blockInfo">
-                      <div>内存:</div>
-                      <div>${Number(memUtilization).toFixed(2)}${
-              memUtilization == '-' ? '' : '%'
-            }</div>
-                  </div>
-                  <div class="blockInfo">
-                      <div>内存:</div>
-                      <div>${Number(memUtilization).toFixed(2)}${
-              memUtilization == '-' ? '' : '%'
-            }</div>
+          for (let title in sqlData) {
+            let contentList = '';
+            let allStatus = null;
+
+            sqlData[title].forEach((item) => {
+              let { alarmLevel, metricName, resultValue, allAlarmLevel } = item;
+
+              if (allAlarmLevel) {
+                allStatus = allAlarmLevel;
+              }
+              contentList += `<div class="blockInfo ${
+                alarmLevel ? (alarmLevel == '1' ? 'warn' : 'error') : 'normal'
+              }">
+                    <div class="infoLeft">${metricName}</div>
+                    <div class="infoRight">${
+                      resultValue ? resultValue : '-'
+                    }</div>
                   </div>`;
-            circleList += `<div class="activeBorder flowDiv ">
-                  <div class="flowTitle ${
-                    status == '0'
-                      ? 'flowActive'
-                      : status == '1'
-                      ? 'flowWarn'
-                      : 'flowError'
-                  }">111</div>
-                  <div class="flowBody">
-                    ${contentList}
-                  </div>
-                </div>`;
-          });
+            });
+
+            circleList += `<div class="flowDiv ${
+              allStatus
+                ? allStatus == '1'
+                  ? 'warnBorder'
+                  : 'errorBorder'
+                : 'activeBorder'
+            }">
+              <div class="flowTitle ${
+                allStatus
+                  ? allStatus == '1'
+                    ? 'flowWarn'
+                    : 'flowError'
+                  : 'flowActive'
+              }">${title}</div>
+              <div class="flowBody">
+                ${contentList}
+              </div>
+            </div>`;
+          }
 
           domStr += circleList;
           $('.firstBlank').append(domStr);
-        }
 
-        $('.flowDiv').on('click', function (params) {
-          // params.stopPropagation();
-          window.parent.postMessage(
-            {
-              sugarUrl: window.location.href,
-              // sugarData: params.currentTarget.children[1].innerHTML, // 自定义图表传递给下钻或联动图表的参数
-              sugarData: {
-                endpoint:
-                  params.currentTarget.children[1].innerHTML.split(':')[1]
+          $('.flowDiv').on('click', function (params) {
+            // params.stopPropagation();
+            window.parent.postMessage(
+              {
+                sugarUrl: window.location.href,
+                sugarData: {
+                  indexName: params.currentTarget.children[0].innerHTML
+                },
+                isDD: true // 自定义图表触发下钻和联动的关键字(触发下钻和联动功能的必填字段-不可删除)
               },
-              isDD: true // 自定义图表触发下钻和联动的关键字(触发下钻和联动功能的必填字段-不可删除)
-            },
-            '*'
-          );
-        });
+              '*'
+            );
+          });
+        }
 
         window.parent.postMessage(
           {
