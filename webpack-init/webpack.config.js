@@ -1,8 +1,16 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const webpack = require('webpack');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const isDev = process.env.NODE_ENV === 'development';
+const BundleAnalyzerPlugin =
+  require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 module.exports = {
   mode: isDev ? 'development' : 'production',
+  entry: './src/index.js',
+  output: {
+    filename: '[name].js'
+  },
   module: {
     rules: [
       {
@@ -34,10 +42,17 @@ module.exports = {
         collapseWhitespace: true
       }
       // hash: true
-    })
+    }),
+    new CleanWebpackPlugin(),
+    new webpack.HotModuleReplacementPlugin()
+    // new BundleAnalyzerPlugin()
   ],
+  optimization: {
+    moduleIds: 'named'
+  },
   devServer: {
     port: '3001',
-    compress: true
+    compress: true,
+    hot: true
   }
 };
