@@ -1,3 +1,5 @@
+// import b from './b';
+
 class Dog {
   constructor(name) {
     this.name = name;
@@ -6,5 +8,13 @@ class Dog {
     console.log(this.name);
   }
 }
-console.log('aaa');
-const dog = new Dog();
+console.log('this is a.js');
+const btn = document.querySelector('#btn');
+btn.onclick = () => {
+  // b();
+  import(/* webpackChunkName: "b" */ './b.js');
+};
+if (module.hot) {
+  // 开启热替换
+  module.hot.accept();
+}
