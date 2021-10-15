@@ -44,6 +44,7 @@
         /* background: rgba(0, 52, 97, 0.5);
         border: 1px solid #0091ff; */
       }
+
       .content2 {
         height: 100%;
         width: 100%;
@@ -54,9 +55,11 @@
         justify-content: space-around;
         margin-bottom: 3px;
       }
+
       .content2 > div:nth-child(1) {
         color: #72c2ff;
       }
+
       .content {
         height: 100%;
         width: 100%;
@@ -82,6 +85,7 @@
         color: #72c2ff;
         /* transform: scale(0.75); */
         padding: 2px 2px 2px;
+        text-align: center;
       }
 
       .setStorage {
@@ -94,6 +98,7 @@
         display: flex;
         justify-content: space-around;
       }
+
       .numST {
         /* text-align: center;
         transform: scale(0.95);
@@ -180,7 +185,6 @@
         function render(param) {
           var sqlData = param.data;
           sqlData = testData.data || [];
-
           $('.testDiv').empty();
 
           for (let title in sqlData) {
@@ -263,8 +267,6 @@
                   </div>`;
                   });
                 } else {
-                  console.log('contentList', d.name);
-
                   contentList = `<div class="content ${
                     status == '1'
                       ? 'flowWarn'
@@ -272,7 +274,7 @@
                       ? 'flowError'
                       : 'flowActive'
                   }">
-                  <div class="ipTag">IP:${ip}</div>
+                  <div class="ipTag">${ip}</div>
                   <div class="numST">
                     <div>CPU:</div>
                     <div>${
@@ -337,8 +339,7 @@
                 sugarUrl: window.location.href,
                 // sugarData: params.currentTarget.children[1].innerHTML, // 自定义图表传递给下钻或联动图表的参数
                 sugarData: {
-                  endpoint:
-                    params.currentTarget.children[0].innerHTML.split(':')[1]
+                  endpoint: params.currentTarget.children[0].innerHTML
                 },
                 isDD: true // 自定义图表触发下钻和联动的关键字(触发下钻和联动功能的必填字段-不可删除)
               },
