@@ -9,7 +9,7 @@ let testData = {
             cpuUtilization: '-',
             ip: '11.101.24.16',
             memUtilization: '-',
-            status: 2
+            status: 0
           },
           {
             cpuUtilization: '-',
@@ -40,10 +40,36 @@ let testData = {
         name: '存储',
         list: [
           {
-            cpuUtilization: '-',
-            ip: '11.101.24.14',
-            memUtilization: '-',
-            status: 1
+            name: 'D控',
+            CPU: '95',
+            吞吐量: '1',
+            存储: '3.0',
+            时延: '14',
+            status: 2
+          },
+          {
+            name: 'C控',
+            CPU: '0.1',
+            吞吐量: '1800',
+            存储: '3.0',
+            时延: '0.1',
+            status: 2
+          },
+          {
+            name: 'B控',
+            CPU: '33.33',
+            吞吐量: '1500',
+            存储: '2.0',
+            时延: '0',
+            status: 2
+          },
+          {
+            name: 'A控',
+            CPU: '1.9',
+            吞吐量: '2000',
+            存储: '4.0',
+            时延: '100',
+            status: 2
           }
         ]
       },
@@ -121,9 +147,8 @@ let testData = {
         name: '存储',
         list: [
           {
-            cpuUtilization: '-',
-            ip: '11.101.24.11',
-            memUtilization: '-',
+            '': '',
+            name: '',
             status: 0
           }
         ]
