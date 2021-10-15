@@ -26,3 +26,15 @@ interface Tuple extends Array<string | number> {
 
 let test1: number;
 test1 = 10;
+
+// [prop: string]: any 任意类型的属性
+let c: { name: string; [prop: string]: any };
+c = { name: '111' };
+
+let d: (a: number, b: number) => number;
+d = function (a: number, b: number): number {
+  return 10;
+};
+
+let aa: object[];
+aa = [{ a: 1 }];
