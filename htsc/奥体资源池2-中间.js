@@ -61,7 +61,7 @@ let testData = {
             吞吐量: '1500',
             存储: '2.0',
             时延: '0',
-            status: 2
+            status: 0
           },
           {
             name: 'A控',
@@ -69,7 +69,7 @@ let testData = {
             吞吐量: '2000',
             存储: '4.0',
             时延: '100',
-            status: 2
+            status: 1
           }
         ]
       },

@@ -1,0 +1,278 @@
+<html>
+  <head>
+    <style>
+      html {
+        background-color: transparent;
+      }
+
+      body {
+        margin: 0;
+        padding: 0;
+        /* display: flex; */
+      }
+
+      #container {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-wrap: wrap;
+      }
+
+      #chartTitle {
+        width: 100%;
+        height: 5%;
+      }
+
+      #chart1 {
+        width: 50%;
+        height: 47.5%;
+      }
+
+      #chart2 {
+        width: 50%;
+        height: 47.5%;
+      }
+
+      #chart3 {
+        width: 50%;
+        height: 47.5%;
+      }
+
+      #chart4 {
+        width: 50%;
+        height: 47.5%;
+      }
+    </style>
+    <!-- 下面的注释的script（jquery、echarts世界地图、echarts GL、D3等），您可以根据需要自己引入 -->
+    <!-- <script src="/static/sugar/static/js/jquery.min.js"></script> -->
+    <!-- <script src="/static/sugar/static/js/echarts-5.1.1.min.js"></script> -->
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+    <script src="./奥体资源池2-2-1-中间.js"></script>
+  </head>
+
+  <body>
+    <div id="container">
+      <div id="chartTitle"></div>
+      <div id="chart1"></div>
+      <div id="chart2"></div>
+      <div id="chart3"></div>
+      <div id="chart4"></div>
+    </div>
+
+    <script>
+      function setName(name) {
+        if (name == 'IOPS') {
+          return name + '(IO/s)';
+        } else if (name == '时延') {
+          return name + '(us)';
+        } else if (name == '吞吐量') {
+          return name + '(MB/s)';
+        } else {
+          return name + '(%)';
+        }
+      }
+      function setTime(timestamp, format = 'H:m:s') {
+        var date = new Date(timestamp);
+        var H = date.getHours() < 10 ? '0' + date.getHours() : date.getHours();
+        var m =
+          date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes();
+        var s =
+          date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds();
+        format = format.indexOf('H') > -1 ? format.replace('H', H) : format;
+        format = format.indexOf('m') > -1 ? format.replace('m', m) : format;
+        format = format.indexOf('s') > -1 ? format.replace('s', s) : format;
+        return format;
+      }
+
+      let titleList = [];
+
+      function setOption(xAxisData, seriesData, title) {
+        let xAxisData1 = [];
+        for (let item of xAxisData) {
+          xAxisData1.push(setTime(Number(item)));
+        }
+        let seriesData1 = [];
+        if (typeof seriesData[0] == 'object') {
+          for (let i = 0; i < seriesData.length; i++) {
+            let yData = [];
+            if (title == '磁盘吞吐量') {
+              for (let item of seriesData[i].data) {
+                yData.push((item / 1024).toFixed(2));
+              }
+            } else {
+              yData = seriesData[i].data;
+            }
+
+            titleList.push(seriesData[i].name);
+            seriesData1.push({
+              name: seriesData[i].name,
+              data: yData,
+              type: 'line',
+              symbol: 'none',
+              lineStyle: {
+                color: i == 0 ? '#0091FF' : i == 1 ? '#9013fe' : '#f7b500'
+              }
+            });
+          }
+        } else {
+          let yData = [];
+          if (title == '磁盘吞吐量') {
+            for (let item of seriesData) {
+              yData.push((item / 1024).toFixed(2));
+            }
+          } else {
+            yData = seriesData;
+          }
+
+          seriesData1.push({
+            data: yData,
+            type: 'line',
+            symbol: 'none',
+            lineStyle: {
+              color: '#0091FF'
+            }
+          });
+        }
+        let option = {
+          title: {
+            text: setName(title),
+            textStyle: {
+              color: '#0091FF'
+            }
+          },
+          legend: {
+            data: titleList,
+            textStyle: {
+              color: '#fff'
+            },
+            y: '6%'
+          },
+          xAxis: {
+            type: 'category',
+            data: xAxisData1,
+            axisLine: {
+              show: true,
+              lineStyle: {
+                color: '#0091FF'
+              }
+            }
+          },
+          yAxis: {
+            type: 'value',
+            axisLine: {
+              show: true,
+              lineStyle: {
+                color: '#0091FF'
+              }
+            },
+            splitLine: {
+              show: false
+            }
+          },
+          series: seriesData1
+        };
+
+        return option;
+      }
+      (function () {
+        var chart1 = echarts.init(document.querySelector('#chart1'));
+        var chart2 = echarts.init(document.querySelector('#chart2'));
+        var chart3 = echarts.init(document.querySelector('#chart3'));
+        var chart4 = echarts.init(document.querySelector('#chart4'));
+        $('#chartTitle').text(window.parent.aoti2Title);
+
+        function render(param) {
+          var data = param.data;
+          let data = testData.data;
+          const { bandWidth, cpuUtilization, delay, iops } = data;
+
+          let option1 = setOption(
+            cpuUtilization.xAxis || [],
+            cpuUtilization.yAxis || [],
+            'CPU'
+          );
+          let option2 = setOption(iops.xAxis || [], iops.yAxis || [], 'IOPS');
+          let option3 = setOption(
+            bandWidth.xAxis || [],
+            bandWidth.yAxis || [],
+            '吞吐量'
+          );
+          let option4 = setOption(delay.xAxis || [], delay.yAxis || [], '时延');
+
+          chart1.setOption(option1);
+          chart2.setOption(option2);
+          chart3.setOption(option3);
+          chart4.setOption(option4);
+        }
+
+        // 触发联动或下钻行为，如果没开启下钻和联动，则可以删除该处代码
+        // 功能说明：1、主要用于当开启自定义图表下钻或者联动时，获取用于传递给下钻或联动图表的参数
+        //         2、点击时可以获取点击图形的当前值
+        // chart1.on('click', function (params) {
+        //   delete params.event;
+        //   window.parent.postMessage(
+        //     {
+        //       sugarUrl: window.location.href,
+        //       sugarData: params, // 自定义图表传递给下钻或联动图表的参数
+        //       isDD: true // 自定义图表触发下钻和联动的关键字(触发下钻和联动功能的必填字段-不可删除)
+        //     },
+        //     '*'
+        //   );
+        // });
+
+        // 作用：用于监页面大小的更改，从而实现图表宽度的自适应
+        window.addEventListener('resize', function () {
+          try {
+            chart1 && chart1.resize && chart1.resize();
+            chart2 && chart2.resize && chart2.resize();
+            chart3 && chart3.resize && chart3.resize();
+            chart4 && chart4.resize && chart4.resize();
+          } catch (e) {
+            window.parent.postMessage(
+              {
+                sugarUrl: window.location.href,
+                sugarError: {
+                  message: e.message
+                }
+              },
+              '*'
+            );
+            throw e;
+          }
+        });
+        // 以下内容不需要修改
+        // 字段说明：
+        //        sugarUrl: 自定义图表所在页面地址
+        //        sugarRender：自定义图表是否渲染成功
+        //        sugarError: 自定义图表渲染失败后的信息
+        // 作用：自定义图表渲染完成后通知外界
+        window.parent.postMessage(
+          {
+            sugarUrl: window.location.href,
+            sugarRender: true
+          },
+          '*'
+        );
+
+        // 作用：监听传递给自定义图表的数据，然后进行图表的渲染
+        window.addEventListener('message', function (event) {
+          try {
+            render(event.data);
+          } catch (e) {
+            window.parent.postMessage(
+              {
+                sugarUrl: window.location.href,
+                sugarError: {
+                  message: e.message
+                }
+              },
+              '*'
+            );
+            throw e;
+          }
+        });
+      })();
+    </script>
+  </body>
+</html>
