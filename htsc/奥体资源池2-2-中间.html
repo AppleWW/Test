@@ -1,0 +1,287 @@
+<html>
+  <head>
+    <style>
+      html,
+      body {
+        /* background-color: transparent; */
+        background: rgba(0, 18, 31, 0.4);
+        margin: 0;
+        padding: 0;
+      }
+
+      #container {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .blockInfo {
+        /* display: flex; */
+        width: 100%;
+        height: 210px;
+        background: rgba(0, 18, 31, 0.4);
+      }
+
+      .outerDiv {
+        width: 100%;
+        display: flex;
+        flex-flow: row wrap;
+        align-content: flex-start;
+        padding: 2px 0 0 0;
+      }
+
+      .flow {
+        width: 47%;
+        height: 46px;
+        position: relative;
+        box-sizing: border-box;
+        margin: 0 auto;
+      }
+
+      .content2 {
+        height: 93%;
+        width: 100%;
+        font-size: 8px !important;
+        letter-spacing: 0;
+        color: #fff;
+        display: flex;
+        justify-content: space-around;
+      }
+
+      .content2 > div:nth-child(1) {
+        color: #72c2ff;
+      }
+
+      .content {
+        height: 100%;
+        width: 100%;
+        font-size: 8px !important;
+        letter-spacing: 0;
+        color: #fff;
+      }
+
+      .list_name {
+        font-size: 8px;
+        color: #72c2ff;
+        letter-spacing: 0;
+        padding: 3px 10px 0;
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .setStorage {
+        width: 97%;
+      }
+
+      .numST2 {
+        width: 21%;
+        flex-direction: column;
+        align-items: center;
+        display: flex;
+        justify-content: space-around;
+      }
+      .netTitle {
+        width: 16%;
+      }
+
+      .error {
+        color: #e02020;
+      }
+
+      .warn {
+        color: #f7b500;
+      }
+
+      .normal {
+        color: #fff;
+      }
+
+      .flowActive {
+        background: rgba(0, 52, 97, 0.5);
+        border: 1px solid #0091ff;
+      }
+
+      .flowError {
+        background-image: linear-gradient(
+          180deg,
+          rgba(224, 32, 32, 0.3) 0%,
+          rgba(224, 32, 32, 0) 52%,
+          rgba(224, 32, 32, 0.3) 100%
+        );
+        border: 1px solid #e02020;
+      }
+
+      .flowWarn {
+        background-image: linear-gradient(
+          180deg,
+          rgba(247, 181, 0, 0.3) 0%,
+          rgba(247, 181, 0, 0) 51%,
+          rgba(247, 181, 0, 0.3) 100%
+        );
+        border: 1px solid #f7b500;
+      }
+    </style>
+    <!-- <script src="/static/sugar/static/js/jquery.min.js"></script> -->
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="./奥体资源池2-中间.js"></script>
+  </head>
+
+  <body>
+    <div id="container">
+      <div class="testDiv"></div>
+    </div>
+
+    <script>
+      (function () {
+        function render(param) {
+          var sqlData = param.data;
+          sqlData = testData.data || [];
+          $('.testDiv').empty();
+
+          // for (let title in sqlData) {
+          let title = '资源池1网络及存储';
+
+          let topList = sqlData[title];
+
+          let poolList = '';
+          var domStr = '';
+          for (let i = 0; i < topList.length; i++) {
+            if (topList[i].name == '光交') {
+              topList.splice(i, 1);
+            }
+            if (topList[i].name == '存储') {
+              topList.push(topList[i]);
+              topList.splice(i, 1);
+              break;
+            }
+          }
+
+          topList.forEach((d, index) => {
+            let list = d.list;
+            var circleList = '';
+            let arrMem = [];
+
+            if (d.name == '存储') {
+              if (title == '资源池1网络及存储') {
+                list = [];
+                d.list.map((item, index) => {
+                  if (item.name == 'A控') {
+                    list[0] = item;
+                  } else if (item.name == 'B控') {
+                    list[1] = item;
+                  } else if (item.name == 'C控') {
+                    list[2] = item;
+                  } else if (item.name == 'D控') {
+                    list[3] = item;
+                  }
+                });
+              } else if (title == '资源池2网络及存储') {
+                list = [{ name: 'A控' }, { name: 'B控' }];
+              }
+            }
+
+            list.forEach((item) => {
+              let contentList = '';
+              if (d.name == '存储') {
+                // arrMem.forEach((memItem) => {
+                contentList += `<div class="content2 ${
+                  item.status == '1'
+                    ? 'flowWarn'
+                    : item.status == '2'
+                    ? 'flowError'
+                    : 'flowActive'
+                }">
+                  <div class="numST2 netTitle">${item.name}</div>
+                  <div class="numST2">
+                    <div>CPU</div>
+                    <div>${item.CPU ? Number(item.CPU).toFixed(2) : '-'}${
+                  item.CPU ? '%' : ''
+                }</div>
+                  </div>
+                  <div class="numST2">
+                    <div>IOPS</div>
+                    <div>${item['吞吐量'] ? Number(item['吞吐量']) : '-'}${
+                  item['吞吐量'] ? '个/s' : ''
+                }</div>
+                  </div>
+                  <div class="numST2">
+                    <div>吞吐量</div>
+                    <div>${item['存储'] ? Number(item['存储']) : '-'}${
+                  item['存储'] ? 'MB/s' : ''
+                }</div>
+                  </div>
+                  <div class="numST2">
+                    <div>时延</div>
+                    <div>${item['时延'] ? Number(item['时延']) : '-'}${
+                  item['时延'] ? 'us' : ''
+                }</div>
+                  </div>
+                  </div>`;
+                // });
+              } else {
+              }
+
+              circleList += `<div class="flow ${
+                d.name == '存储' ? 'setStorage' : ''
+              }">${contentList}</div>`;
+            });
+            if (d.name == '存储') {
+              poolList += `
+              <div class="list_name">${d.name}
+                <img style="width: 12px;height: 14px;padding-top: 2px;" src="${'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABEAAAAUCAYAAABroNZJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAAEnQAABJ0Ad5mH3gAAALcSURBVDhPjVTrT49hGL7eP0Kkn/Ehs+YDpdJBpZJUcwg1RasJG2npRNL5oKQSMzYzzNmwGTYf2IwPzJlhZnOY82mY0xyGy32/9+9XSZs+XHvf93nv57rv677u54HjF0wXg/rAt97f/z7/ekgGh9AZEkrHP5zO0PGCiL/hr5B1F2ESP64PiS54oohR04ikWiLvMFF4lqi4RdQ/IaruESWXiEUniFmbibB8OsMnWlK/EC+JZEJyPbHiJtH6nlj7hej8Tqz7SXT9MnT+INq/Ems+Eg0viNyDdILShSjMSzIslmiUHxq8ngNDiySb0kQnQBS4JJ4JRPV9ouNb/xv+wW+i+TWRsMpUuCQBkURitcnRilreSdkfiLbPIs0LlaFSm98QdY+JnP1E0Ey30UaiL0l1RGQBEVNKTO0gMrdK4AFi/hFrdPZOIn2jNT5iCRFVSIyZJz0J91UiulbeIUqvEItPyuZ94sImIesUtBumdxFzthP5R4mic0T5NZFT1asSTzQxd4/JaPtkTdOyVVrDc3s2vSRWv/XKlJiyq0RwXm85UlJILhFXTmTtIJaeIYovSrbrMiu3rVdapVaw4BiR0irxQhCYKjMW2quxy8673mPGBpmZJtOufUputBmaVENMlmeqEGRuE7LjRHyFFWByxOISyawOqIzqB5JdplWz66SWXraqKu/KBD+VOJFT+0hMKPZarAdKOzw6wxqnmzWg4Zn04ZWR6kxoX+rkCOg8FZx2XXRGJIocnVglkcOF7N1WekKlaG4m0tpMmlo9W86L2q5SVFa8xOi3WG1ylMQTY9k14/IbYvMpm40smQ0l0Qpz9hILpQ/aXF+l0jMbe1eO2BRdJI5ckLLFSpWgdqvVOqUK/VaLVWLNQ5fcCUxxT7KR+MlVIA45I9OI2DIiY4s4dcgGT11Ty9Xa7F0iqYUYmyOHNs61t+cq6IZcTHo5/Q8ap8ndAnrfbAOFb3M3gvkH/oBw7RBrsMsAAAAASUVORK5CYII='}" />
+                </div>
+              <div class="outerDiv" id="${d.name}">
+                      ${circleList}
+                    </div>`;
+            }
+          });
+
+          domStr += `<div class="blockInfo">
+                      ${poolList}
+                    </div>`;
+          $('.testDiv').append(domStr);
+          // }
+          $('.content2').on('click', function (params) {
+            // params.stopPropagation();
+            window.parent.postMessage(
+              {
+                sugarUrl: window.location.href,
+                // sugarData: params.currentTarget.children[1].innerHTML, // 自定义图表传递给下钻或联动图表的参数
+                sugarData: {
+                  endpoint: params.currentTarget.children[0].innerHTML
+                },
+                isDD: true // 自定义图表触发下钻和联动的关键字(触发下钻和联动功能的必填字段-不可删除)
+              },
+              '*'
+            );
+          });
+        }
+        window.parent.postMessage(
+          {
+            sugarUrl: window.location.href,
+            sugarRender: true
+          },
+          '*'
+        );
+
+        window.addEventListener('message', function (event) {
+          try {
+            render(event.data);
+          } catch (e) {
+            window.parent.postMessage(
+              {
+                sugarUrl: window.location.href,
+                sugarError: {
+                  message: e.message
+                }
+              },
+              '*'
+            );
+            throw e;
+          }
+        });
+      })();
+    </script>
+  </body>
+</html>
